@@ -6,10 +6,10 @@ import sys
 def main():
 
     # APIの秘密鍵
-    CK = 'xxxxxxxxxxxxxxxx'
-    CKS = 'xxxxxxxxxxxxxxxx'
-    AT = 'xxxxxxxxxxxxxxxx'
-    ATS = 'xxxxxxxxxxxxxxxx'
+    CK = 'VLkXT8nlK287SnzwHxdhjlpAu'
+    CKS = 'hj1k2QPw6HAzIxBqXNzfluO3vzZizGlW4Bk4tWDYpnUKFAhpvv'
+    AT = '1168521721608986624-PA0vOxssfxJHcNHeacN0jHhqSS7nL9'
+    ATS = '6ocMlOS4ibp5l6aZ2WwrKZXHCMoospE7hkdLPMRe4f1SC'
     # ユーザー・ツイートID
     user_id = '@@yuki_furukawaHP'
     tweet_id = '1142628461053280257' # str型で指定
