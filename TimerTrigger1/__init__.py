@@ -9,6 +9,6 @@ def main(mytimer: func.TimerRequest) -> None:
         tzinfo=datetime.timezone.utc).isoformat()
 
     if mytimer.past_due:
-        logging.info('The timer is past due!')
+        logging.info('関数の呼び出しがスケジュールよりも遅れています')
 
-    logging.info('Python timer trigger function ran at %s', utc_timestamp)
+    logging.info('Pythonのタイマートリガー関数が%sに実行されました', utc_timestamp)
