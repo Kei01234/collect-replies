@@ -14,6 +14,7 @@ now = time.ctime()
 cnvtime = time.strptime(now)
 setTime=time.strftime("%Y/%m/%d %H時%M分%S秒", cnvtime)
 
+
 url='https://api.twitter.com/1.1/statuses/update.json'
 params={'status':setTime+'にTwitterAPIから投稿'}
 
