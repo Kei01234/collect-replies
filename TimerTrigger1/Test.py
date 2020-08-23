@@ -1,3 +1,11 @@
 import time
 
-print(time.gmtime())
+
+def main():
+    print("ちんこ")
+
+def function():
+    main()
+    print("おっぱい")
+
+function()
