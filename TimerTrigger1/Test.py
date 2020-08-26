@@ -1,11 +1,8 @@
-import time
+text="I'm Keisuke Ishigami."
 
+text2=""
 
-def main():
-    print("ちんこ")
-
-def function():
-    main()
-    print("おっぱい")
-
-function()
+if text2:
+    print("right")
+else:
+    print("wrong")
