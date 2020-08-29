@@ -1,5 +1,6 @@
 import datetime
 import logging
+import time
 import azure.functions as func
 
 #TwitterAPIの設定から
@@ -42,5 +43,6 @@ def main(mytimer: func.TimerRequest) -> None:
 
     testTwitterAPI()
 
+    time.sleep(30)
 
 

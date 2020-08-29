@@ -1,8 +1,10 @@
-text="I'm Keisuke Ishigami."
+path="Test.txt"
 
-text2=""
+#文を追加するコード
 
-if text2:
-    print("right")
-else:
-    print("wrong")
+with open(path,mode="a") as file:
+    file.write("I like sushi very much.")
+    file.write(" ")
+
+with open(path) as file:
+    print(file.read())
