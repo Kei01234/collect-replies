@@ -9,7 +9,8 @@ brokenStrings=["(",")","[","]","'",'"']
 with open(path) as file:
     morph = nltk.word_tokenize(file.read())
 
-incompleteSentence=" ".join(morph)
+#リストを結合する
+incompleteSentence=" ".join(morph) 
 
 #markovifyがエラーを吐く文字を消去する
 for brokenStrig in brokenStrings:

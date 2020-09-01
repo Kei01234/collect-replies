@@ -2,6 +2,8 @@
 import json
 import time
 from requests_oauthlib import OAuth1Session
+import MeCab
+import markovify
 
 CONSUMER_KEY='QV4qhj53ZaSB8sOJtlJ6YcjMR'
 CONSUMER_SECRET='2J4TJfDeMe4zhNvgEClQuPoZE7xNb22xvNTJQV8oDWtDcFve1l'
@@ -10,11 +12,14 @@ ACCESS_TOKEN_SECRET='LEkNSCNCkShxTOM2V5hZ3yYIamhxvtfXBxjRfZNpMukcm'
 
 twitter=OAuth1Session(CONSUMER_KEY,CONSUMER_SECRET,ACCESS_TOKEN,ACCESS_TOKEN_SECRET)
 
+path="Test4.txt"
 screenName=""
+#markovifyがエラーを吐く文字のリスト
+brokenStrings=["(",")","[","]","'",'"']
 
 #スクリーンネームを取得する関数
 def getScreenName():
-    global screenName
+    global screenName, twitter
     timelineUrl="https://api.twitter.com/1.1/statuses/user_timeline.json"
     userId=2377035565 #橋本環奈のユーザーID
 
@@ -33,8 +38,51 @@ def getScreenName():
 getScreenName()
 
 
+
+#markovifyのモデルを作成しツイートする
+def makeModelAndTweet():
+    global path
+    with open(path) as file:
+        text=file.read()
+    tagger=MeCab.Tagger("-Owakati")
+    titiedText=tagger.parse(text)
+
+    model=markovify.NewlineText(titiedText, state_size=2)
+
+    #100回モデルを作ってそれでもNoneだったら諦める
+    for t in range(100):
+        sentence=model.make_short_sentence(200)
+
+        if sentence!=None:
+            #空白を消す
+            sentence=sentence.replace(" ","")
+
+            #APIを使ってtweetする処理を追加
+            print("文が生成されました")
+            return sentence
+
+    if sentence==None:
+        print("文が生成されませんでした")
+        sentence="marcovifyで文が生成されませんでした"
+        return sentence
+
+
+
+#ツイートする関数
+def tweet(tweetSentence):
+    global twitter
+    url="https://api.twitter.com/1.1/statuses/update.json"
+    params={'status':tweetSentence}
+
+    print(tweetSentence)
+    print("ツイートします")
+    res=twitter.post(url,params=params)
+    print(res.status_code)
+
+
 #リプライを取得
-def getReply():
+def getAndWriteReply():
+    global brokenStrings, path
     searchUrl="https://api.twitter.com/1.1/search/tweets.json"
     counts=0
 
@@ -46,7 +94,7 @@ def getReply():
         "exclude":"retweets"
     }
 
-    #10分ごとに10件リプライを取得し分別する 30分を一区切りとすることを忘れない！
+    #5分ごとに10件リプライを取得し分別する 30分を一区切りとすることを忘れない！
     replyList2=["","","","","","","","","",""]
 
     while True:
@@ -83,39 +131,55 @@ def getReply():
 
         #replyList2の中にreplyList1と一致している要素がない場合
         if i>len(replyList1)-1:
+            #markovifyがエラーを吐く文字を消去する
+            for x in range(len(replyList1)-1):
+                for brokenString in brokenStrings:
+                    replyList1[x]=replyList1[x].replace(brokenString,"")
+
             replyList2=replyList1
         #replyList2の中にreplyList1と一致している要素がある場合
         else:
             replyList2=[]
             for n in range(i):
-                replyList2.append(replyList1[n])
-            
-        #replyList2をtextファイルに書き込む
-        ???
+                #markovifyがエラーを吐く文字を消去する
+                for brokenString in brokenStrings:
+                    replyList1[n]=replyList1[n].replace(brokenString,"")
+                    replyList2.append(replyList1[n])
 
+        
         print("replyList1を出力します")
         print(replyList1)
         print("------")
         print("replyList2を出力します")
         print(replyList2)
         print("--------")
+        
 
-        #２回目でこのループを抜ける
+        #replyList2をtextファイルに書き込むコードを作成
+        #textをリストとして読み込む
+        with open(path) as f:
+            text=f.readlines()
+
+        ##replyList2の値をtextファイルから読み込んだリストに入れていく
+        for y in range(len(replyList2)):
+            text.insert(y,replyList2[y]+"\n")
+
+        #リストをtextに書き込む
+        with open(path, mode="w") as f:
+            f.writelines(text)
+
+        tweet(makeModelAndTweet())
+
+        #5回目でこのループを抜ける
         counts+=1
-        if counts>=2:
+        if counts>=5:
             break
 
-        #10分処理を止める
-        time.sleep(20)
+        #5分処理を止める
+        time.sleep(300)
 
-getReply()
+getAndWriteReply()
 
 
-"""
-一定時間ごとにリプライを取得し、前回取得したリプライと新しいリプライが異なっていれば
-そのリプライをテキストファイルに出力する。
-"""
-
-path="Test3.txt"
 
 
