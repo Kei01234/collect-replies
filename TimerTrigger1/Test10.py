@@ -1,10 +1,13 @@
+a="ちんこ"
+
 def function1():
+    global a
+    print(a)
     a="こんにちは"
-    return a
 
-def function2(b):
-    print(b)
-
+def function2():
+    print(a)
 
 
-function2(function1())
+function1()
+function2()

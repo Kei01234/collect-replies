@@ -12,7 +12,7 @@ ACCESS_TOKEN_SECRET='LEkNSCNCkShxTOM2V5hZ3yYIamhxvtfXBxjRfZNpMukcm'
 
 twitter=OAuth1Session(CONSUMER_KEY,CONSUMER_SECRET,ACCESS_TOKEN,ACCESS_TOKEN_SECRET)
 
-path="Test4.txt"
+path="MinamiHamabe.txt"
 screenName=""
 #markovifyがエラーを吐く文字のリスト
 brokenStrings=["(",")","[","]","'",'"']
@@ -21,7 +21,7 @@ brokenStrings=["(",")","[","]","'",'"']
 def getScreenName():
     global screenName, twitter
     timelineUrl="https://api.twitter.com/1.1/statuses/user_timeline.json"
-    userId=2377035565 #橋本環奈のユーザーID
+    userId=978442914693959680 #浜辺美波のユーザーID
 
     timelineParams={
         "count":1,
@@ -59,11 +59,13 @@ def makeModelAndTweet():
 
             #APIを使ってtweetする処理を追加
             print("文が生成されました")
+            
             return sentence
 
     if sentence==None:
         print("文が生成されませんでした")
-        sentence="marcovifyで文が生成されませんでした"
+        
+        sentence=""
         return sentence
 
 
@@ -76,8 +78,12 @@ def tweet(tweetSentence):
 
     print(tweetSentence)
     print("ツイートします")
+    
     res=twitter.post(url,params=params)
+    
     print(res.status_code)
+    
+    
 
 
 #リプライを取得
@@ -97,12 +103,13 @@ def getAndWriteReply():
     #5分ごとに10件リプライを取得し分別する 30分を一区切りとすることを忘れない！
     replyList2=["","","","","","","","","",""]
 
+    res=twitter.get(searchUrl,params=searchParams)
+    timeline=json.loads(res.text)
+
     while True:
-        res=twitter.get(searchUrl,params=searchParams)
-
-        timeline=json.loads(res.text)
-
+        #replyList1の更新
         replyList1=[]
+
         #replyList1に取得した10件を代入する
         for i in range(10):
             information1=timeline["statuses"][i]['in_reply_to_status_id']
@@ -119,6 +126,19 @@ def getAndWriteReply():
                 reply=reply.replace("@"+screenName+" ","")
 
                 replyList1.append(reply)
+
+        #whileの処理が1回目のときtextから前のデータを引き継ぐ
+        if counts==0:
+            textList=[]
+            num=0
+            with open(path) as f:
+                for text in f.readlines():
+                    textList.append(text)
+                    replyList2=textList
+                    #Listの要素を10個にするために10回めでループを終了
+                    num+=1
+                    if num>=10:
+                        break
 
         #1度につき10件取得してるからその10件それぞれに対して分別する
         i=0
@@ -137,6 +157,7 @@ def getAndWriteReply():
                     replyList1[x]=replyList1[x].replace(brokenString,"")
 
             replyList2=replyList1
+
         #replyList2の中にreplyList1と一致している要素がある場合
         else:
             replyList2=[]
@@ -147,12 +168,12 @@ def getAndWriteReply():
                     replyList2.append(replyList1[n])
 
         
-        print("replyList1を出力します")
+        print('replyList1を出力します')
         print(replyList1)
-        print("------")
-        print("replyList2を出力します")
+        print('------')
+        print('replyList2を出力します')
         print(replyList2)
-        print("--------")
+        print('--------')
         
 
         #replyList2をtextファイルに書き込むコードを作成
@@ -160,7 +181,7 @@ def getAndWriteReply():
         with open(path) as f:
             text=f.readlines()
 
-        ##replyList2の値をtextファイルから読み込んだリストに入れていく
+        #replyList2の値をtextファイルから読み込んだリストに入れていく
         for y in range(len(replyList2)):
             text.insert(y,replyList2[y]+"\n")
 
