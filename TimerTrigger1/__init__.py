@@ -31,7 +31,7 @@ def testTwitterAPI():
     params={'status':setTime+'にTwitterAPIから投稿'}
 
     res=twitter.post(url,params=params)
-    print(res.status_code)
+    logging.info(res.status_code)
     logging.info(res.status_code)
 """
 
@@ -89,12 +89,12 @@ def makeModelAndTweet():
             sentence=sentence.replace(" ","")
 
             #APIを使ってtweetする処理を追加
-            print("文が生成されました")
+            logging.info("文が生成されました")
             
             return sentence
 
     if sentence==None:
-        print("文が生成されませんでした")
+        logging.info("文が生成されませんでした")
         
         sentence=""
         return sentence
@@ -107,12 +107,12 @@ def tweet(tweetSentence):
     url="https://api.twitter.com/1.1/statuses/update.json"
     params={'status':tweetSentence}
 
-    print(tweetSentence)
-    print("ツイートします")
+    logging.info(tweetSentence)
+    logging.info("ツイートします")
     
     res=twitter.post(url,params=params)
     
-    print(res.status_code)
+    logging.info(res.status_code)
     
     
 
@@ -199,12 +199,12 @@ def getAndWriteReply():
                     replyList2.append(replyList1[n])
 
         
-        print('replyList1を出力します')
-        print(replyList1)
-        print('------')
-        print('replyList2を出力します')
-        print(replyList2)
-        print('--------')
+        logging.info('replyList1を出力します')
+        logging.info(replyList1)
+        logging.info('------')
+        logging.info('replyList2を出力します')
+        logging.info(replyList2)
+        logging.info('--------')
         
 
         #replyList2をtextファイルに書き込むコードを作成
