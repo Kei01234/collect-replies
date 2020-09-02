@@ -1,5 +1,5 @@
 azure-functions
 requests
 requests_oauthlib
+mecab-python3
 markovify
-MeCab
