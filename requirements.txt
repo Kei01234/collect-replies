@@ -1,5 +1,6 @@
 azure-functions
 requests
 requests_oauthlib
-mecab-python3
+ginza
+spacy
 markovify

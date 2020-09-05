@@ -7,7 +7,11 @@ import azure.functions as func
 import json
 import time
 from requests_oauthlib import OAuth1Session
-import MeCab
+#import MeCab
+
+from ginza import *
+import spacy
+
 import markovify
 
 
@@ -73,16 +77,25 @@ getScreenName()
 #markovifyのモデルを作成しツイートする
 def makeModelAndTweet():
     global path
+    wordList=[]
+    nlp=spacy.load("ja_ginza")
+
     with open(path) as file:
         text=file.read()
-    tagger=MeCab.Tagger("-Owakati")
-    titiedText=tagger.parse(text)
+    #tagger=MeCab.Tagger("-Owakati")
+    doc=nlp(text)
 
-    model=markovify.NewlineText(titiedText, state_size=2)
+    for word in doc:
+        wordList.append(str(word))
 
-    #100回モデルを作ってそれでもNoneだったら諦める
-    for t in range(100):
-        sentence=model.make_short_sentence(200)
+    titledText=" ".join(wordList)
+
+    #titiedText=tagger.parse(text)
+    model=markovify.NewlineText(titledText, state_size=2)
+
+    #10回モデルを作ってそれでもNoneだったら諦める
+    for t in range(10):
+        sentence=model.make_short_sentence(150)
 
         if sentence!=None:
             #空白を消す
@@ -228,7 +241,7 @@ def getAndWriteReply():
             break
 
         #5分処理を止める
-        time.sleep(300)
+        time.sleep(10)
 
 
 
